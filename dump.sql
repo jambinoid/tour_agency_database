@@ -61,33 +61,12 @@ CREATE TABLE public.individuals (
     patronymic_name character varying(255),
     second_name character varying(255) NOT NULL,
     age smallint NOT NULL,
-    CONSTRAINT individuals_age_check CHECK ((age >= 18))
+    CONSTRAINT individuals_age_check CHECK ((age >= 18)),
+    CONSTRAINT individuals_customer_id_check CHECK ((customer_id > 0))
 );
 
 
 ALTER TABLE public.individuals OWNER TO postgres;
-
---
--- Name: individuals_customer_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
-CREATE SEQUENCE public.individuals_customer_id_seq
-    AS smallint
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.individuals_customer_id_seq OWNER TO postgres;
-
---
--- Name: individuals_customer_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
-ALTER SEQUENCE public.individuals_customer_id_seq OWNED BY public.individuals.customer_id;
-
 
 --
 -- Name: managers; Type: TABLE; Schema: public; Owner: postgres
@@ -132,7 +111,8 @@ ALTER SEQUENCE public.managers_id_seq OWNED BY public.managers.id;
 CREATE TABLE public.order_list (
     order_id integer NOT NULL,
     service_id integer NOT NULL,
-    service_total smallint NOT NULL
+    service_total smallint NOT NULL,
+    CONSTRAINT order_list_service_total_check CHECK ((service_total > 0))
 );
 
 
@@ -183,7 +163,8 @@ CREATE TABLE public.services (
     tour_object_id smallint NOT NULL,
     name character varying(255) NOT NULL,
     price integer NOT NULL,
-    unit_of_measurements character varying(20) NOT NULL
+    unit_of_measurements character varying(20) NOT NULL,
+    CONSTRAINT services_price_check CHECK ((price >= 0))
 );
 
 
@@ -250,13 +231,6 @@ ALTER TABLE public.tour_objects_id_seq OWNER TO postgres;
 --
 
 ALTER SEQUENCE public.tour_objects_id_seq OWNED BY public.tour_objects.id;
-
-
---
--- Name: individuals customer_id; Type: DEFAULT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.individuals ALTER COLUMN customer_id SET DEFAULT nextval('public.individuals_customer_id_seq'::regclass);
 
 
 --
@@ -448,13 +422,6 @@ COPY public.tour_objects (id, short_name, organisation_form, official_name, kind
 9	Экскурсии и гиды	ИП	Иванов Алексей Петрович	Гид	74872550012	gidy@tula.ru	Тула	Россия
 10	Гостевой дом "Европейский"	ООО	Гостевой дом "Европейский"	Проживание	74872361991	evropeisky-hotel@vsegostinitsy.ru	Тула	Россия
 \.
-
-
---
--- Name: individuals_customer_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.individuals_customer_id_seq', 1, false);
 
 
 --
